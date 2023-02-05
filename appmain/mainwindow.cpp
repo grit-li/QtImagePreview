@@ -1,6 +1,7 @@
 #include <QDragEnterEvent>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include <QWheelEvent>
 #include <QMimeData>
 #include <QFileInfo>
 #include <QDebug>
@@ -10,6 +11,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , m_movePoint(0, 0)
 {
     ui->setupUi(this);
 }
@@ -30,6 +32,13 @@ QRect MainWindow::centreRect(QSize size)
     return rc;
 }
 
+QSize MainWindow::scaledImage(QSize size, int scaled)
+{
+    size.setWidth((size.width() * scaled) / 100);
+    size.setHeight((size.height() * scaled) / 100);
+    return size;
+}
+
 void MainWindow::dragEnterEvent(QDragEnterEvent* event)
 {
     if(event->mimeData()->hasUrls()) {
@@ -48,7 +57,6 @@ void MainWindow::dropEvent(QDropEvent* event)
                 QString fileName = file.toLocalFile();
                 QFileInfo info(fileName);
                 if(info.isFile()) {
-                    qDebug() << fileName;
                     if(info.suffix() == "png") {
                         QPixmap pixmap(fileName);
                         resize(pixmap.size());
@@ -89,5 +97,24 @@ void MainWindow::resizeEvent(QResizeEvent* event)
     rc.setWidth(pixmapSize.width());
     rc.setHeight(pixmapSize.height());
     ui->label_preview->setGeometry(rc);
+}
+
+void MainWindow::wheelEvent(QWheelEvent* event)
+{
+    if(!ui->label_preview->pixmap() || ui->label_preview->pixmap()->isNull() == true) {
+        return;
+    }
+    if(event->delta() > 0) {
+        m_scaledRange += 5;
+    } else {
+        m_scaledRange -= 5;
+    }
+    QSize size = scaledImage(ui->label_preview->pixmap()->size(), m_scaledRange);
+    QSize mainWindowSize = geometry().size();
+    ui->label_preview->resize(size);
+
+    if(mainWindowSize.width() >= size.width() && mainWindowSize.height() >= size.height() && size != QSize(0,0)) {
+        ui->label_preview->setGeometry(centreRect(size));
+    }
 }
 
