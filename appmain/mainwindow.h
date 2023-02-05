@@ -16,10 +16,16 @@ public:
     ~MainWindow(void);
 
 private:
-    void dragEnterEvent(QDragEnterEvent*) override;
+    QRect centreRect(QSize);
+private:
+    void dragEnterEvent(QDragEnterEvent *) override;
     void dropEvent(QDropEvent *) override;
+    void mousePressEvent(QMouseEvent *) override;
+    void mouseMoveEvent(QMouseEvent *) override;
+    void resizeEvent(QResizeEvent *) override;
 
 private:
     Ui::MainWindow *ui;
+    QPoint m_movePoint;
 };
 #endif // MAINWINDOW_H
