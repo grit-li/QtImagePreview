@@ -1,6 +1,7 @@
-QT       += core gui
+QT += gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+TEMPLATE = lib
+DEFINES += QOI_LIBRARY
 
 CONFIG += c++11
 
@@ -15,30 +16,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-TARGET = ImagePreview
 ROOT_PATH = $$PWD/..
 include($$ROOT_PATH/config.pri)
 
-INCLUDEPATH += $$ROOT_PATH/qoi
-LIBS += -L$$LIBS_PATH -lqoi
-
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp
+    cqoi.cpp \
+    qoi.c
 
 HEADERS += \
-    mainwindow.h
-
-FORMS += \
-    mainwindow.ui
-
-RESOURCES += \
-    resource.qrc
-
-RC_ICONS = $$ROOT_PATH/appmain/images/logo.ico
+    cqoi.h \
+    qoi.h
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+unix {
+    target.path = /usr/lib
+}
 !isEmpty(target.path): INSTALLS += target
-

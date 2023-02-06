@@ -7,6 +7,7 @@
 #include <QDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "cqoi.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -39,6 +40,37 @@ QSize MainWindow::scaledImage(QSize size, int scaled)
     return size;
 }
 
+static inline bool isTrueSuffix(QString suffix)
+{
+    bool ret = false;
+    if(suffix == "png" || suffix == "bmp" || suffix == "jpg" || suffix == "jpeg" || suffix == "qoi") {
+        ret = true;
+    }
+    return ret;
+}
+static inline QPixmap createPixmap(const QString& fileName, const QString& suffix)
+{
+    if(suffix == "qoi") {
+        return CQoi::toPixmap(fileName);
+    } else {
+        return QPixmap(fileName);
+    }
+}
+void MainWindow::showImage(QString fileName)
+{
+    QFileInfo info(fileName);
+    if(info.isFile()) {
+        if(isTrueSuffix(info.suffix())) {
+            QPixmap pixmap = createPixmap(fileName, info.suffix());
+            if(pixmap.isNull() == false) {
+                resize(pixmap.size());
+                ui->label_preview->setGeometry(centreRect(pixmap.size()));
+                ui->label_preview->setPixmap(pixmap);
+            }
+        }
+    }
+}
+
 void MainWindow::dragEnterEvent(QDragEnterEvent* event)
 {
     if(event->mimeData()->hasUrls()) {
@@ -54,16 +86,7 @@ void MainWindow::dropEvent(QDropEvent* event)
         const auto&& fileList = event->mimeData()->urls();
         for(const auto& file : fileList) {
             if(file.isLocalFile()) {
-                QString fileName = file.toLocalFile();
-                QFileInfo info(fileName);
-                if(info.isFile()) {
-                    if(info.suffix() == "png") {
-                        QPixmap pixmap(fileName);
-                        resize(pixmap.size());
-                        ui->label_preview->setGeometry(centreRect(pixmap.size()));
-                        ui->label_preview->setPixmap(QPixmap(fileName));
-                    }
-                }
+                showImage(file.toLocalFile());
             }
         }
     }

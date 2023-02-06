@@ -18,6 +18,7 @@ public:
 private:
     QRect centreRect(QSize);
     QSize scaledImage(QSize, int);
+    void showImage(QString);
 private:
     void dragEnterEvent(QDragEnterEvent *) override;
     void dropEvent(QDropEvent *) override;
