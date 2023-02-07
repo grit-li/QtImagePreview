@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_movePoint(0, 0)
 {
     ui->setupUi(this);
+    m_windowTitle = windowTitle();
 }
 
 MainWindow::~MainWindow(void)
@@ -66,6 +67,8 @@ void MainWindow::showImage(QString fileName)
                 resize(pixmap.size());
                 ui->label_preview->setGeometry(centreRect(pixmap.size()));
                 ui->label_preview->setPixmap(pixmap);
+                m_scaledRange = 100;
+                setWindowTitle(QString("%1-%2%").arg(m_windowTitle).arg(m_scaledRange));
             }
         }
     }
@@ -132,9 +135,11 @@ void MainWindow::wheelEvent(QWheelEvent* event)
     } else {
         m_scaledRange -= 5;
     }
+
     QSize size = scaledImage(ui->label_preview->pixmap()->size(), m_scaledRange);
     QSize mainWindowSize = geometry().size();
     ui->label_preview->resize(size);
+    setWindowTitle(QString("%1-%2%").arg(m_windowTitle).arg(m_scaledRange));
 
     if(mainWindowSize.width() >= size.width() && mainWindowSize.height() >= size.height() && size != QSize(0,0)) {
         ui->label_preview->setGeometry(centreRect(size));

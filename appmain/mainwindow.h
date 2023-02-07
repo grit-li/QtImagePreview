@@ -30,6 +30,7 @@ private:
 private:
     Ui::MainWindow *ui;
     QPoint m_movePoint;
+    QString m_windowTitle;
 
 private:
     class ScaledRange
