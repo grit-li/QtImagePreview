@@ -68,7 +68,7 @@ void MainWindow::showImage(QString fileName)
                 ui->label_preview->setGeometry(centreRect(pixmap.size()));
                 ui->label_preview->setPixmap(pixmap);
                 m_scaledRange = 100;
-                setWindowTitle(QString("%1-%2%").arg(m_windowTitle).arg(m_scaledRange));
+                setWindowTitle(QString("%1 %2x%3-%4%").arg(m_windowTitle).arg(pixmap.width()).arg(pixmap.height()).arg(m_scaledRange));
             }
         }
     }
@@ -139,7 +139,7 @@ void MainWindow::wheelEvent(QWheelEvent* event)
     QSize size = scaledImage(ui->label_preview->pixmap()->size(), m_scaledRange);
     QSize mainWindowSize = geometry().size();
     ui->label_preview->resize(size);
-    setWindowTitle(QString("%1-%2%").arg(m_windowTitle).arg(m_scaledRange));
+    setWindowTitle(QString("%1 %2x%3-%4%").arg(m_windowTitle).arg(ui->label_preview->pixmap()->width()).arg(ui->label_preview->pixmap()->height()).arg(m_scaledRange));
 
     if(mainWindowSize.width() >= size.width() && mainWindowSize.height() >= size.height() && size != QSize(0,0)) {
         ui->label_preview->setGeometry(centreRect(size));
